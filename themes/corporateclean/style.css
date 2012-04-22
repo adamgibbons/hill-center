@@ -299,12 +299,20 @@ filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#2d3e33', end
 * Sidebar Blocks - Menus
 */
 
+.region-sidebar-first .block {
+	margin-bottom:30px;
+}
+
+.region-sidebar-first .block .content { 
+	border:1px solid #ffffff;
+	-webkit-border-radius: 5px; 
+	-moz-border-radius:	 5px; 
+	border-radius: 5px;
+	overflow:hidden; 
+	background:#ffffff; 
+	margin:0;
 
 
-
-.region-sidebar-first .block .content { border:1px solid #ffffff; 
--webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; 
-padding: 20px; overflow:hidden; background:#ffffff; margin:0 0 15px 0;
  /* shadow */
 -webkit-box-shadow: 0 2px 6px #efefef inset;  -moz-box-shadow:0 2px 6px #efefef inset;  box-shadow:0 2px 6px #efefef inset; }
 
@@ -327,6 +335,8 @@ padding: 20px; overflow:hidden; background:#ffffff; margin:0 0 15px 0;
 }
 
 .region-sidebar-first ul.menu ul.menu { padding:0 0 0 15px; }
+
+
 
 /* 
 * Contact 
@@ -649,8 +659,6 @@ div.messages.status a, div.messages.error a, div.messages.warning a { color:#fff
 /* 
 * Slideshow Typography
 */
-
-
 
 #block-views-20612a6723ef3add09ae7a654257128d {
 	margin:20px auto;
@@ -1200,9 +1208,6 @@ div.view-id-spaces td p {
 	margin-bottom:15px;
 }
 
-
-
-
 .view-id-front_page_programs_feed .views-field-term-node-tid {
 	text-transform:uppercase;
 	font-size:9px;
@@ -1234,37 +1239,18 @@ div.view-id-spaces td p {
 	white-space:nowrap;
 }
 
-
-
-
-
-
-
 .views-exposed-form .views-exposed-widget .form-submit {
 	padding:3px;
 	border:1px solid black;
 }
 
-
-
-
-
-
-
-
 .view-id-course_offerings .views-field-field-program-image a {
 	background-color:yellow;
 }
 
-
-
 #views_slideshow_cycle_div_front_page_slideshow_views_slide-block_1 {
 	width:880px;
 }
-
-
-
-
 
 .view-program-landing-page .views-field-body ul {
 	list-style:inside;
@@ -1308,7 +1294,6 @@ p.current-programs-in-category {
 
 
 
-
 body.in-maintenance {
 	background-color:white;
 	margin:20px 0;
@@ -1325,15 +1310,7 @@ body.in-maintenance #main {
 	width:100%;
 }
 
-#block-views-mailing-list-signup-block-1 {
-	margin-bottom:-15px;
-}
-	
-#block-views-mailing-list-signup-block-1 .edit-actions--2 {
-	margin-bottom:0px;
-	padding-bottom:12px;
-	border-bottom:1px solid #333;
-}
+
 
 #block-block-10 h2 {
 	background-color:red;
@@ -1343,6 +1320,14 @@ body.in-maintenance #main {
 	border:1px solid red;
 }
 
+
+/* 'Join Our Email List' block (front) */
+	
+#block-views-mailing-list-signup-block-1 .edit-actions--2 {
+	margin-bottom:0px;
+	padding-bottom:12px;
+	border-bottom:1px solid #333;
+}
 
 /* Calendar module */
 
@@ -1363,10 +1348,3 @@ body.in-maintenance #main {
 .fc-event span.fc-event-time {
 	border:none;
 }
-
-
-
-
-
-
-
