@@ -1,0 +1,38 @@
+#superfish-1 {
+	width:100%;
+	margin:0;
+	padding:0;
+}
+
+.sf-menu.sf-style-pomegranate a {
+	padding: 12px 20px;
+	background-color:#E30D2C;
+	border:none;
+	border-left:1px solid white;
+	font-weight:900;
+}
+
+.sf-menu ul {
+	margin-top:7px;
+	
+}
+
+.sf-menu ul li {
+	border-bottom:1px solid white;
+}
+
+a > .sf-sub-indicator {
+	top: 12px;
+}
+
+.sf-menu.sf-style-pomegranate li:hover,
+.sf-menu.sf-style-pomegranate li.sfHover,
+.sf-menu.sf-style-pomegranate li.active a,
+.sf-menu.sf-style-pomegranate a:focus,
+.sf-menu.sf-style-pomegranate a:hover,
+.sf-menu.sf-style-pomegranate a:active,
+.sf-menu.sf-style-pomegranate.sf-navbar li li {
+  background: maroon;
+  color: #ffffff;
+}
+
