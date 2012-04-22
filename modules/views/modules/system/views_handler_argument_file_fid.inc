@@ -1,22 +1,21 @@
 <?php
 /**
- * Argument handler to accept multiple file ids.
- *
- * @ingroup views_argument_handlers
+ * Argument handler to accept a file id.
  */
-class views_handler_argument_file_fid extends views_handler_argument_numeric {
+class views_handler_argument_file_fid extends views_handler_argument {
   /**
-   * Override the behavior of title_query(). Get the filenames.
+   * Override the behavior of title(). Get the title of the file.
    */
-  function title_query() {
-    $titles = db_select('file_managed', 'f')
+  function title() {
+    $title = db_select('file_managed', 'f')
       ->fields('f', array('filename'))
-      ->condition('fid', $this->value)
+      ->condition('fid', $this->argument)
       ->execute()
-      ->fetchCol();
-    foreach ($titles as &$title) {
-      $title = check_plain($title);
+      ->fetchField();
+    if (empty($title)) {
+      return t('No title');
     }
-    return $titles;
+
+    return check_plain($title);
   }
 }

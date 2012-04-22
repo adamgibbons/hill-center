@@ -1,9 +1,8 @@
 <?php
 
 /**
+ * @file
  * Field handler to display all taxonomy terms of a node.
- *
- * @ingroup views_field_handlers
  */
 class views_handler_field_term_node_tid extends views_handler_field_prerender_list {
   function init(&$view, &$options) {
@@ -135,8 +134,8 @@ class views_handler_field_term_node_tid extends views_handler_field_prerender_li
 
   function add_self_tokens(&$tokens, $item) {
     foreach(array('tid', 'name', 'vocabulary_machine_name', 'vocabulary') as $token) {
-      // Replace _ with - for the vocabulary machine name.
-      $tokens['[' . $this->options['id'] . '-' . str_replace('_', '-', $token). ']'] = isset($item[$token]) ? $item[$token] : '';
+      $tokens['[' . $this->options['id'] . '-' . $token . ']'] = isset($item[$token]) ? $item[$token] : '';
     }
   }
 }
+

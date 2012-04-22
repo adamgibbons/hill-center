@@ -26,7 +26,7 @@ class panels_renderer_simple extends panels_renderer_standard {
     // NOP
   }
 
-  function prepare($external_settings = NULL) {
+  function prepare() {
     $this->prep_run = TRUE;
   }
 }

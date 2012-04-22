@@ -516,21 +516,16 @@ function theme_panels_common_content_list($vars) {
  * @return
  *   The rendered output.
  */
-function panels_common_print_layout_links($layouts, $base_path, $link_options = array(), $current_layout = NULL) {
+function panels_common_print_layout_links($layouts, $base_path, $link_options = array()) {
   $output = '';
 
   $categories = array();
   ctools_include('cleanstring');
-  $default_category = '';
   foreach ($layouts as $id => $layout) {
     $category = ctools_cleanstring($layout['category']);
 
     $categories[$category] = $layout['category'];
-    if ($id == $current_layout) {
-      $default_category = $category;
-    }
-
-    $options[$category][$id] = panels_print_layout_link($id, $layout, $base_path . '/' . $id, $link_options, $current_layout);
+    $options[$category][$id] = panels_print_layout_link($id, $layout, $base_path . '/' . $id, $link_options);
   }
 
   $form = array();
@@ -540,9 +535,8 @@ function panels_common_print_layout_links($layouts, $base_path, $link_options = 
     '#options' => $categories,
     '#name' => 'categories',
     '#id' => 'edit-categories',
-    '#value' => $default_category,
+    '#value' => '',
     '#parents' => array('categories'),
-    '#access' => (count($categories) > 1) ? TRUE : FALSE,
   );
 
   $output .= drupal_render($form);
@@ -563,7 +557,7 @@ function panels_common_print_layout_links($layouts, $base_path, $link_options = 
 
     $output .= '<div id="panels-layout-category-' . $category . '-wrapper">';
     $output .= '<div id="panels-layout-category-' . $category . '" class="form-checkboxes clearfix">';
-    $output .= (count($categories) > 1) ? '<div class="panels-layouts-category">' . $categories[$category] . '</div>' : '';
+    $output .= '<div class="panels-layouts-category">' . $categories[$category] . '</div>';
 
     foreach ($links as $key => $link) {
       $output .= $link;

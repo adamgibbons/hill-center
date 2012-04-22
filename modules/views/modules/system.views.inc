@@ -51,7 +51,6 @@ function system_views_data() {
     'argument' => array(
       'handler' => 'views_handler_argument_file_fid',
       'name field' => 'filename', // the field to display in the summary.
-      'numeric' => TRUE,
     ),
     'filter' => array(
       'handler' => 'views_handler_filter_numeric',
@@ -253,7 +252,7 @@ function system_views_data() {
       'base' => 'node',
       'base field' => 'nid',
       'relationship field' => 'id',
-      'extra' => array(array('field' => 'type', 'value' => 'node')),
+      'extra' => array(array('table' => 'file_usage', 'field' => 'type', 'operator' => '=', 'value' => 'node')),
     ),
   );
   $data['file_usage']['node_to_file'] = array(

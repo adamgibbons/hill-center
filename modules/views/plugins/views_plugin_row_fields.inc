@@ -80,3 +80,4 @@ class views_plugin_row_fields extends views_plugin_row {
     $form_state['values']['row_options']['inline'] = array_filter($form_state['values']['row_options']['inline']);
   }
 }
+

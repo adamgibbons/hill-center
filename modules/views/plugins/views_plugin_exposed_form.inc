@@ -34,7 +34,6 @@ class views_plugin_exposed_form extends views_plugin {
   }
 
   function options_form(&$form, &$form_state) {
-    parent::options_form($form, $form_state);
     $form['submit_button'] = array(
       '#type' => 'textfield',
       '#title' => t('Submit button text'),

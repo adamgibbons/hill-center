@@ -50,3 +50,4 @@ class views_plugin_style_list extends views_plugin_style {
     );
   }
 }
+

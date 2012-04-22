@@ -1,15 +1,14 @@
 
-.panel-1col {
+.panel-1col { 
 /*  overflow: hidden;  */
 }
 
-.panel-2col .panel-col-first .inside {
+.panel-2col .panel-col-first .inside { 
   margin: 0;
 }
 
 
-.panel-1col .panel-col {
-  width: 100%;
+.panel-1col .panel-col { 
 }
 
 #panels-edit-display .panel-pane,

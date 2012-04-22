@@ -1344,4 +1344,29 @@ body.in-maintenance #main {
 }
 
 
+/* Calendar module */
+
+.fc-view-agendaWeek .fc-event-time, .fc-view-agendaDay .fc-event-time {
+	display:none;
+}
+
+.fc-header, .fc-header table, .fc-header tbody, .fc-header tr, .fc-header td {
+	border: none; 
+}
+
+.fc-event-default, .fc-event-default .fc-event-skin, .fc-event-default .fc-event-time, .fc-event-default a {
+	color:black;
+	border-color:#888;
+	background-color:#dedede;
+}
+
+.fc-event span.fc-event-time {
+	border:none;
+}
+
+
+
+
+
+
 

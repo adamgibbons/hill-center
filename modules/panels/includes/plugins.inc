@@ -129,7 +129,10 @@ class panels_cache_object {
     $this->head = drupal_add_html_head();
     $this->css = drupal_add_css();
     $this->tokens = ctools_set_page_token();
-    $this->js = drupal_add_js();
+
+    foreach (array('header', 'footer') as $scope) {
+      $this->js[$scope] = drupal_add_js(NULL, NULL, $scope);
+    }
   }
 
   /**
@@ -164,31 +167,45 @@ class panels_cache_object {
 
     foreach ($css as $name => $data) {
       if (!isset($start[$name])) {
-        $this->css[$name] = $data;
+        $this->css[$name] = array($data['data'], $data['type'], $data['media'], $data['preprocess']);
       }
     }
 
-    $js = drupal_add_js();
+    $js = array();
+    // A little less simple for js
+    foreach (array('header', 'footer') as $scope) {
+      $js[$scope] = drupal_add_js(NULL, NULL, $scope);
+    }
 
     $start = $this->js;
     $this->js = array();
 
-    // If there are any differences between the old and the new javascript then
-    // store them to be added later.
-    if ($diff = array_diff_assoc($js, $start)) {
-      $this->js = $diff;
-    }
+    foreach ($js as $scope => $scopes) {
+      foreach ($scopes as $type => $types) {
+        foreach ($types as $id => $info) {
+          if (!isset($start[$scope][$type][$id])) {
+            switch ($type) {
+              case 'setting':
+                $this->js[] = array($info, $type, $scope);
+                break;
 
-    // Special case the settings key and get the difference of the data.
-    if ($settings_diff = array_diff_assoc($js['settings']['data'], $start['settings']['data'])) {
-      $this->js['settings'] = $settings_diff;
+              case 'inline':
+                $this->js[] = array($info['code'], $type, $scope, $info['defer']);
+                break;
+
+              default:
+                $this->js[] = array($id, $type, $scope, $info['defer'], $info['cache']);
+            }
+          }
+        }
+      }
     }
 
     // And for tokens:
     $tokens = ctools_set_page_token();
     foreach ($this->tokens as $token => $argument) {
       if (isset($tokens[$token])) {
-        unset($tokens[$token]);
+        unset($tokens);
       }
     }
 
@@ -204,19 +221,12 @@ class panels_cache_object {
     }
     if (!empty($this->css)) {
       foreach ($this->css as $args) {
-        drupal_add_css($args['data'], $args);
+        call_user_func_array('drupal_add_css', $args);
       }
     }
     if (!empty($this->js)) {
-      foreach ($this->js as $key => $args) {
-        if ($key !== 'settings') {
-          drupal_add_js($args['data'], $args);
-        }
-        else {
-          foreach ($args as $setting) {
-            drupal_add_js($setting, 'setting');
-          }
-        }
+      foreach ($this->js as $args) {
+        call_user_func_array('drupal_add_js', $args);
       }
     }
 

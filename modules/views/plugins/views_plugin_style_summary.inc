@@ -73,3 +73,4 @@ class views_plugin_style_summary extends views_plugin_style {
     ));
   }
 }
+

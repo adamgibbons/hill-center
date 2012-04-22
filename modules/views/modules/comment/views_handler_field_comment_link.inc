@@ -1,12 +1,12 @@
 <?php
 /**
  * Base field handler to present a link.
- *
- * @ingroup views_field_handlers
  */
-class views_handler_field_comment_link extends views_handler_field_entity {
+class views_handler_field_comment_link extends views_handler_field {
   function construct() {
     parent::construct();
+    $this->additional_fields['cid'] = 'cid';
+    $this->additional_fields['nid'] = 'nid';
   }
 
   function option_definition() {
@@ -23,7 +23,7 @@ class views_handler_field_comment_link extends views_handler_field_entity {
       '#default_value' => $this->options['text'],
     );
     $form['link_to_node'] = array(
-      '#title' => t('Link field to the node if there is no comment.'),
+      '#title' => t('Link to field to the node if there is no comment.'),
       '#type' => 'checkbox',
       '#default_value' => $this->options['link_to_node'],
     );
@@ -42,9 +42,8 @@ class views_handler_field_comment_link extends views_handler_field_entity {
 
   function render_link($data, $values) {
     $text = !empty($this->options['text']) ? $this->options['text'] : t('view');
-    $comment = $this->get_value($values);
-    $nid = $comment->nid;
-    $cid = $comment->cid;
+    $nid = $this->get_value($values, 'nid');
+    $cid = $this->get_value($values, 'cid');
 
     $this->options['alter']['make_link'] = TRUE;
     $this->options['alter']['html'] = TRUE;

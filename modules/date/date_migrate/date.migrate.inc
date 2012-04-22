@@ -6,47 +6,37 @@
  */
 
 class DateMigrateFieldHandler extends MigrateFieldHandler {
-
-  /**
-   * Declares the types of fields used.
-   */
   public function __construct() {
     $this->registerTypes(array('date', 'datestamp', 'datetime'));
   }
 
-  /**
+  /*
    * Arguments for a date field migration.
    *
-   * @param string $timezone
+   * @param timezone
    *   Timezone (such as UTC, America/New_York, etc.) to apply.
-   * @param string $timezone_db
+   * @param timezone_db
    *   Timezone_db value for the field.
-   * @param string $rrule
+   * @param rrule
    *   Rule string for a repeating date field.
-   * @param string $language
+   * @param language
    *   Language of the text (defaults to destination language)
-   *
-   * @return array
-   *   An array of the defined variables in this scope.
    */
   static function arguments($timezone = 'UTC', $timezone_db = 'UTC', $rrule = NULL, $language = NULL) {
     return get_defined_vars();
   }
 
   /**
-   * Converts incoming data into the proper field arrays for Date fields.
+   * Convert incoming data into the proper field arrays for Date fields.
    *
-   * @param object $entity
-   *   The destination entity which will hold the field arrays.
+   * @param $entity
+   *  The destination entity which will hold the field arrays.
    * @param array $field_info
-   *   Metadata for the date field being populated.
+   *  Metadata for the date field being populated.
    * @param array $instance
-   *   Metadata for this instance of the date field being populated.
+   *  Metadata for this instance of the date field being populated.
    * @param array $values
-   *   Array of date values to be fielded.
-   *
-   * @return array|null
-   *   An array of date fields.
+   *  Array of date values to be fielded.
    */
   public function prepare($entity, array $field_info, array $instance, array $values) {
     if (isset($values['arguments'])) {
@@ -80,18 +70,17 @@ class DateMigrateFieldHandler extends MigrateFieldHandler {
     // Setup the standard Field API array for saving.
     $delta = 0;
     foreach ($values as $from) {
-      // Set defaults.
+      // Set defaults
       $to = NULL;
       $timezone = $default_timezone;
       $timezone_db = $default_timezone_db;
       $rrule = $default_rrule;
 
-      // Is the value a straight datetime value, or JSON containing a set of
-      // properties?
-      if (!empty($from) && $from{0} == '{') {
+      // Is the value a straight datetime value, or JSON containing a set of properties?
+      if ($from{0} == '{') {
         $properties = drupal_json_decode($from);
         $from = $properties['from'];
-        // Properties passed in with the date override any set via arguments.
+        // Properties passed in with the date override any set via arguments
         if (!empty($properties['to'])) {
           $to = $properties['to'];
         }
@@ -106,23 +95,7 @@ class DateMigrateFieldHandler extends MigrateFieldHandler {
         }
       }
 
-      // Missing data? Create an empty value and return;
-      // Don't try to turn the empty value into a bogus
-      // timestamp for 'now'.
-      if (empty($from)) {
-        $return[$language][$delta]['value'] = NULL;
-        if (!empty($field_info['settings']['todate'])) {
-          $return[$language][$delta]['value2'] = NULL;
-        }
-        return $return;
-      }
-
-      // If there is no 'to' date, just use the 'from' date.
-      if (!empty($field_info['settings']['todate']) && empty($to)) {
-        $to = $from;
-      }
-
-      // If we have a value, work from a timestamp.
+      // Work from a timestamp
       $from = MigrationBase::timestamp($from);
       if ($to) {
         $to = MigrationBase::timestamp($to);
@@ -131,17 +104,17 @@ class DateMigrateFieldHandler extends MigrateFieldHandler {
       // What does the destination field expect?
       switch ($field_info['type']) {
         case 'datestamp':
-          // Already done.
+          // Already done
           break;
         case 'datetime':
-          // YYYY-MM-DD HH:MM:SS.
+          // YYYY-MM-DD HH:MM:SS
           $from = format_date($from, 'custom', 'Y-m-d H:i:s', $timezone);
           if ($to) {
             $to = format_date($to, 'custom', 'Y-m-d H:i:s', $timezone);
           }
           break;
         case 'date':
-          // ISO date: YYYY-MM-DDTHH:MM:SS.
+          // ISO date: YYYY-MM-DDTHH:MM:SS
           $from = format_date($from, 'custom', 'Y-m-d\TH:i:s', $timezone);
           if ($to) {
             $to = format_date($to, 'custom', 'Y-m-d\TH:i:s', $timezone);
@@ -151,13 +124,14 @@ class DateMigrateFieldHandler extends MigrateFieldHandler {
           break;
       }
 
-      // Handle repeats, coming in as RRULEs. Many field instances may be
-      // created.
-      if (function_exists('date_repeat_build_dates') && !empty($field_info['settings']['repeat']) && $rrule) {
-        include_once DRUPAL_ROOT . '/' . drupal_get_path('module', 'date_api') . '/date_api_ical.inc';
+      // Handle repeats, coming in as RRULEs. Many field instances may be created.
+      if ($instance['widget']['type'] == 'date_text_repeat' && $rrule) {
+        include_once(DRUPAL_ROOT . '/' . drupal_get_path('module', 'date') . '/date_repeat.inc');
+        include_once(DRUPAL_ROOT . '/' . drupal_get_path('module', 'date_api') . '/date_api_ical.inc');
         $item = array('value' => $from, 'value2' => $to, 'timezone' => $timezone);
         // Can be de-uglified when http://drupal.org/node/1159404 is committed.
-        $return[$language] = date_repeat_build_dates(NULL, date_ical_parse_rrule($field_info, $rrule), $field_info, $item);
+        $return[$language] = date_repeat_build_dates(NULL, date_ical_parse_rrule($field_info, $rrule),
+          $field_info, $item);
       }
       else {
         $return[$language][$delta]['value'] = $from;

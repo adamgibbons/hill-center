@@ -10,35 +10,16 @@
 function _views_create_handler($definition, $type = 'handler', $handler_type = NULL) {
 //  debug('Instantiating handler ' . $definition['handler']);
   if (empty($definition['handler'])) {
-    vpr('_views_create_handler - type: @type - failed: handler has not been provided.',
-      array('@type' => isset($handler_type) ? ( $type . '(handler type: ' . $handler_type . ')' ) : $type)
-    );
     return;
   }
 
   // class_exists will automatically load the code file.
   if (!empty($definition['override handler']) &&
       !class_exists($definition['override handler'])) {
-    vpr(
-      '_views_create_handler - loading override handler @type failed: class @override_handler could not be loaded. ' .
-      'Verify the class file has been registered in the corresponding .info-file (files[]).',
-      array(
-        '@type' => isset($handler_type) ? ( $type . '(handler type: ' . $handler_type . ')' ) : $type,
-        '@override_handler' => $definition['override handler']
-      )
-    );
     return;
   }
 
   if (!class_exists($definition['handler'])) {
-    vpr(
-      '_views_create_handler - loading handler @type failed: class @handler could not be loaded. ' .
-      'Verify the class file has been registered in the corresponding .info-file (files[]).',
-      array(
-        '@type' => isset($handler_type) ? ( $type . '(handler type: ' . $handler_type . ')' ) : $type,
-        '@handler' => $definition['handler']
-      )
-    );
     return;
   }
 
@@ -175,17 +156,6 @@ class views_handler extends views_object {
   public $table_alias;
 
   /**
-   * The actual field in the database table, maybe different
-   * on other kind of query plugins/special handlers.
-   */
-  var $real_field;
-
-  /**
-   * The relationship used for this field.
-   */
-  var $relationship = NULL;
-
-  /**
    * init the handler with necessary data.
    * @param $view
    *   The $view object this handler is attached to.
@@ -295,11 +265,9 @@ class views_handler extends views_object {
     // If grouping, check to see if the aggregation method needs to modify the field.
     if ($this->view->display_handler->use_group_by()) {
       $this->view->init_query();
-      if ($this->query) {
-        $info = $this->query->get_aggregation_info();
-        if (!empty($info[$this->options['group_type']]['method']) && function_exists($info[$this->options['group_type']]['method'])) {
-          return $info[$this->options['group_type']]['method']($this->options['group_type'], $field);
-        }
+      $info = $this->query->get_aggregation_info();
+      if (!empty($info[$this->options['group_type']]['method']) && function_exists($info[$this->options['group_type']]['method'])) {
+        return $info[$this->options['group_type']]['method']($this->options['group_type'], $field);
       }
     }
 
@@ -1156,15 +1124,14 @@ function views_get_timezone() {
   }
 
   // set up the database timezone
-  $db_type = Database::getConnection()->databaseType();
-  if (in_array($db_type, array('mysql', 'pgsql'))) {
+  if (in_array(db_driver(), array('mysql', 'mysqli', 'pgsql'))) {
     $offset = '+00:00';
     static $already_set = FALSE;
     if (!$already_set) {
-      if ($db_type == 'pgsql') {
+      if (db_driver() == 'pgsql') {
         db_query("SET TIME ZONE INTERVAL '$offset' HOUR TO MINUTE");
       }
-      elseif ($db_type == 'mysql') {
+      elseif (db_driver() == 'mysql') {
         db_query("SET @@session.time_zone = '$offset'");
       }
 
@@ -1190,7 +1157,7 @@ function views_get_timezone() {
  *   An appropriate SQL string for the db type and field type.
  */
 function views_date_sql_field($field, $field_type = 'int', $set_offset = NULL) {
-  $db_type = Database::getConnection()->databaseType();
+  $db_type = db_driver();
   $offset = $set_offset !== NULL ? $set_offset : views_get_timezone();
   if (isset($offset) && !is_numeric($offset)) {
     $dtz = new DateTimeZone($offset);
@@ -1200,6 +1167,7 @@ function views_date_sql_field($field, $field_type = 'int', $set_offset = NULL) {
 
   switch ($db_type) {
     case 'mysql':
+    case 'mysqli':
       switch ($field_type) {
         case 'int':
           $field = "DATE_ADD('19700101', INTERVAL $field SECOND)";
@@ -1248,10 +1216,11 @@ function views_date_sql_field($field, $field_type = 'int', $set_offset = NULL) {
  *   An appropriate SQL string for the db type and field type.
  */
 function views_date_sql_format($format, $field, $field_type = 'int', $set_offset = NULL) {
-  $db_type = Database::getConnection()->databaseType();
+  $db_type = db_driver();
   $field = views_date_sql_field($field, $field_type, $set_offset);
   switch ($db_type) {
     case 'mysql':
+    case 'mysqli':
       $replace = array(
         'Y' => '%Y',
         'y' => '%y',
@@ -1334,7 +1303,7 @@ function views_date_sql_format($format, $field, $field_type = 'int', $set_offset
  *   An appropriate SQL string for the db type and field type.
  */
 function views_date_sql_extract($extract_type, $field, $field_type = 'int', $set_offset = NULL) {
-  $db_type = Database::getConnection()->databaseType();
+  $db_type = db_driver();
   $field = views_date_sql_field($field, $field_type, $set_offset);
 
   // Note there is no space after FROM to avoid db_rewrite problems
@@ -1357,6 +1326,7 @@ function views_date_sql_extract($extract_type, $field, $field_type = 'int', $set
   case('WEEK'):  // ISO week number for date
     switch ($db_type) {
       case('mysql'):
+      case('mysqli'):
         // WEEK using arg 3 in mysql should return the same value as postgres EXTRACT
         return "WEEK($field, 3)";
       case('pgsql'):
@@ -1365,6 +1335,7 @@ function views_date_sql_extract($extract_type, $field, $field_type = 'int', $set
   case('DOW'):
     switch ($db_type) {
       case('mysql'):
+      case('mysqli'):
         // mysql returns 1 for Sunday through 7 for Saturday
         // php date functions and postgres use 0 for Sunday and 6 for Saturday
         return "INTEGER(DAYOFWEEK($field) - 1)";
@@ -1374,6 +1345,7 @@ function views_date_sql_extract($extract_type, $field, $field_type = 'int', $set
   case('DOY'):
     switch ($db_type) {
       case('mysql'):
+      case('mysqli'):
         return "DAYOFYEAR($field)";
       case('pgsql'):
         return "EXTRACT(DOY FROM($field))";
@@ -1429,22 +1401,12 @@ function views_date_sql_extract($extract_type, $field, $field_type = 'int', $set
  *       be set in the cached definition because it can't know aliases; this field
  *       can only be used by realtime joins.
  *   - - field: Field or formula
- *       in formulas we can reference the right table by using %alias
- *       @see SelectQueryInterface::addJoin()
  *   - - operator: defaults to =
  *   - - value: Must be set. If an array, operator will be defaulted to IN.
  *   - - numeric: If true, the value will not be surrounded in quotes.
  *   - - extra type: How all the extras will be combined. Either AND or OR. Defaults to AND.
  */
 class views_join {
-  var $table = NULL;
-  var $left_table = NULL;
-  var $left_field = NULL;
-  var $field = NULL;
-  var $extra = NULL;
-  var $type = NULL;
-  var $definition = array();
-
   /**
    * Construct the views_join object.
    */
@@ -1578,7 +1540,7 @@ class views_join {
 /**
  * Join handler for relationships that join with a subquery as the left field.
  * eg:
- *  LEFT JOIN node node_term_data ON ([YOUR SUBQUERY HERE]) = node_term_data.nid
+ *  LEFT JOIN node node_term_data ON ([YOUR SUBQUERY HERE]) = node_term_data.nid 
  *
  * join definition
  *   same as views_join class above, except:
@@ -1589,7 +1551,7 @@ class views_join_subquery extends views_join {
     parent::construct($table, $left_table, $left_field, $field, $extra, $type);
     $this->left_query = $this->definition['left_query'];
   }
-
+  
   /**
    * Build the SQL for the join this object represents.
    *

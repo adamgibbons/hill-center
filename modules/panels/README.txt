@@ -1,6 +1,6 @@
 
-Welcome to Panels 3.
+Welcome to Panels 2.
 
-A little documentation should go here, but Panels 3 is alsoi a beast - you're
-best off checking the online handbook on Drupal.org, or this issue:
-http://drupal.org/node/887560. 
+A little documentation should go here, but Panels 2 is a beast - you're best
+off checking the online handbook on Drupal.org, or the developer/API docs,
+which are available at http://doxy.samboyer.org/panels2/ 

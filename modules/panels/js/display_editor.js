@@ -6,11 +6,6 @@
 
 (function ($) {
 
-// randomly lock a pane.
-// @debug only
-Drupal.settings.Panels = Drupal.settings.Panels || {};
-
-
 /** Delete pane button **/
 Drupal.Panels.bindClickDelete = function(context) {
   $('a.pane-delete:not(.pane-delete-processed)', context)
@@ -68,17 +63,13 @@ Drupal.Panels.Draggable = {
 
   hoverclass: 'hoverclass',
   helperclass: 'helperclass',
-  accept: 'div.panel-region',
+  accept: 'div.panels-display',
   handle: 'div.grabber',
   draggable: 'div.panel-portlet',
   main: 'div#panels-dnd-main',
 
   // part of the id to remove to get just the number
   draggableId: 'panel-pane-',
-
-  // part of the id to remove to get just the number
-  regionId: 'panel-region-',
-
   // What to add to the front of a the id to get the form id for a panel
   formId: 'input#edit-',
 
@@ -117,12 +108,10 @@ Drupal.Panels.Draggable = {
   },
 
   calculateDropZones: function(event, dropzone) {
-    var draggable = Drupal.Panels.Draggable;
     var dropzones = [];
     $(this.accept).each(function() {
       var offset = $(this).offset();
       offset.obj = this;
-      offset.region = this.id.replace(draggable.regionId, '');
       offset.width = $(this).outerWidth();
       offset.height = $(this).outerHeight();
       dropzones.push(offset);
@@ -132,7 +121,7 @@ Drupal.Panels.Draggable = {
 
   reCalculateDropZones: function() {
     for (var i in this.dropzones) {
-      var offset = $(this.dropzones[i].obj).offset();
+      offset = $(this.dropzones[i].obj).offset({padding:true});
       offset.width = $(this.dropzones[i].obj).outerWidth();
       offset.height = $(this.dropzones[i].obj).outerHeight();
       $.extend(this.dropzones[i], offset);
@@ -199,7 +188,7 @@ Drupal.Panels.Draggable = {
       }
     }
     // If we're over one, see if it's different.
-    if (new_dropzone && (!this.regionLock || this.regionLockRegions[new_dropzone.region])) {
+    if (new_dropzone) {
       var changed = false;
       if (!this.current_dropzone || new_dropzone.obj.id != this.current_dropzone.obj.id) {
         this.changeDropZone(new_dropzone);
@@ -230,7 +219,7 @@ Drupal.Panels.Draggable = {
 
         val += this.id.replace(draggable.draggableId, '');
       });
-      var region = this.id.replace(draggable.regionId, '');
+      var region = this.id.replace('panel-pane-', '');
       $('input[name="panel[pane][' +  region + ']"]').val(val);
     });
     return false;
@@ -330,7 +319,6 @@ Drupal.Panels.DraggableHandler = function() {
     }
 
     draggable.object = $(this).parent(draggable.draggable).get(0);
-    draggable.paneId = draggable.object.id.replace(draggable.draggableId, '');
 
     // create a placeholder so we can put this object back if dropped in an invalid location.
     draggable.placeholder = $('<div class="draggable-placeholder-object" style="display:none"></div>"');
@@ -413,17 +401,6 @@ Drupal.Panels.DraggableHandler = function() {
 
     draggable.calculateDropZones(draggable.mousePos, e);
     draggable.timeoutId = setTimeout('timer()', scrollTimer);
-
-    // If locking to a particular set of regions, set that:
-    if (Drupal.settings.Panels && Drupal.settings.Panels.RegionLock && Drupal.settings.Panels.RegionLock[draggable.paneId]) {
-      draggable.regionLock = true;
-      draggable.regionLockRegions = Drupal.settings.Panels.RegionLock[draggable.paneId];
-    }
-    else {
-      draggable.regionLock = false;
-      draggable.regionLockRegions = null;
-    }
-
     return false;
   };
 

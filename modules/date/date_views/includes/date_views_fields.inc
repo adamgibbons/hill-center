@@ -9,8 +9,8 @@
  *
  *  @return
  *    array with fieldname, type, and table.
- *  @see
- *    date_views_date_views_fields() which implements
+ *  @see 
+ *    date_views_date_views_fields() which implements 
  *    the hook_date_views_fields() for the core date fields.
  */
 function _date_views_fields($base = 'node') {
@@ -26,12 +26,13 @@ function _date_views_fields($base = 'node') {
   // We use fields that provide filter handlers as our universe of possible
   // fields of interest.
   $all_fields = date_views_views_fetch_fields($base, 'filter');
-
+  
   // Iterate over all the fields that Views knows about.
   $fields = array();
   foreach ((array) $all_fields as $alias => $val) {
+
     // Set up some default values.
-    $granularity = array('year', 'month', 'day', 'hour', 'minute', 'second');
+    $granularity = array('year', 'month', 'day', 'hour', 'minute');
     $tz_handling = 'site';
     $related_fields = array();
     $timezone_field = '';
@@ -46,16 +47,11 @@ function _date_views_fields($base = 'node') {
     $field_name = $tmp[1];
     $table_name = $tmp[0];
 
-    // Unset the date filter to avoid ugly recursion and broken values.
-    if ($field_name == 'date_filter') {
-      continue;
-    }
-
     $fromto = array($name, $name);
 
     // If we don't have a filter handler, we don't need to do anything more.
     if (!$handler = views_get_handler($table_name, $field_name, 'filter')) {
-      continue;
+      continue; 
     }
     $handler = views_get_handler($table_name, $field_name, 'filter');
     $handler_name = $handler->definition['handler'];
@@ -82,13 +78,12 @@ function _date_views_fields($base = 'node') {
           break;
         default:
           // If this is not a date field, nothing more to do.
-          continue;
-      }
-
-      $revision = in_array($base, array('node_revision')) ? FIELD_LOAD_REVISION : FIELD_LOAD_CURRENT;
-      $db_info = date_api_database_info($field, $revision);
+          continue;          
+      }      
+      
+      $db_info = date_api_database_info($field);      
       $name = $table_name . "." . $field_name;
-      $granularity = !empty($field['granularity']) ? $field['granularity'] : array('year', 'month', 'day', 'hour', 'minute', 'second');
+      $granularity = !empty($field['granularity']) ? $field['granularity'] : array('year', 'month', 'day', 'hour', 'minute');
 
       $fromto = array(
         $table_name . '.' . $db_info['columns'][$table_name]['value'],
@@ -97,7 +92,7 @@ function _date_views_fields($base = 'node') {
 
       if (isset($field['settings']['tz_handling'])) {
         $tz_handling = $field['settings']['tz_handling'];
-        $db_info = date_api_database_info($field, $revision);
+        $db_info = date_api_database_info($field);
         if ($tz_handling == 'date') {
           $offset_field = $table_name . '.' . $db_info['columns'][$table_name]['offset'];
         }
@@ -120,7 +115,7 @@ function _date_views_fields($base = 'node') {
       if ($field['cardinality'] != 1) {
         array_push($related_fields, "$table_name.delta");
         $delta_field = $table_name . '_delta';
-      }
+      }      
     }
 
     // Allow custom modules to provide date fields.
@@ -164,6 +159,6 @@ function _date_views_fields($base = 'node') {
       $fields['alias'][$alias] = $fields['name'][$name];
     }
   }
-  cache_set($cid, $fields, 'cache_views');
+  //cache_set($cid, $fields, 'cache_views');
   return $fields;
 }

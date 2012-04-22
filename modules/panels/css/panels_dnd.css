@@ -3,7 +3,7 @@
   margin: 0.5em 0;
 }
 
-#panels-dnd-main div.panel-region {
+#panels-dnd-main div.panels-display {
   padding: 0 0 .5em 0;
   border: 1px dashed #ddd;
   background: #f8f8f8;
@@ -11,7 +11,7 @@
   -moz-border-radius: 0.333em;
 }
 
-#panels-dnd-main div.panel-region h2.label {
+#panels-dnd-main div.panels-display h2.label {
   color: #555;
   text-shadow: #fff 1px 1px 1px;
   text-align: center;
@@ -21,14 +21,14 @@
   vertical-align: middle;
 }
 
-#panels-dnd-main div.panel-region .pane-add {
+#panels-dnd-main div.panels-display .pane-add {
   float: left;
   margin: 2px;
   background: #999;
   border: 1px solid #fff;
 }
 
-#panels-dnd-main div.panel-region .pane-add-link {
+#panels-dnd-main div.panels-display .pane-add-link {
   position: relative;
   display: block;
   width: 16px;
@@ -42,12 +42,12 @@ div.panels-set-title-hide .panels-set-title {
 }
 
 /* Add Icon */
-#panels-dnd-main div.panel-region .pane-add-link  {
+#panels-dnd-main div.panels-display .pane-add-link  {
 }
-#panels-dnd-main div.panel-region .pane-add-link img {
+#panels-dnd-main div.panels-display .pane-add-link img {
   display: none;
 }
-#panels-dnd-main div.panel-region .pane-add-link a.ctools-dropdown-image-link {
+#panels-dnd-main div.panels-display .pane-add-link a.ctools-dropdown-image-link {
   border: none;
   width: 16px;
   height: 18px;
@@ -105,39 +105,35 @@ div.panels-set-title-hide .panel-pane-is-title {
   display: none; /* initially hidden */
 }
 
-.panel-portlet .grab-title {
+.panel-portlet .grabber {
   width: 100%;
   height: 20px;
+  cursor: move;
   margin: 0 0 0.5em 0;
   overflow: hidden;
-  background: #b3b3b3;
+  background: #b3b3b3 url('../images/bg-shade-medium.png') repeat-x 0 100%;
   color: #fff;
   text-shadow: #555 1px 1px 1px;
   border-color: #999;
   font-weight: bold;
 }
 
-.panel-portlet .grabber {
-  cursor: move;
-  background: #b3b3b3 url('../images/bg-shade-medium.png') repeat-x 0 100%;
-}
-
-.panel-portlet.hidden-pane .grab-title {
+.panel-portlet.hidden-pane .grabber {
   background-color: #888;
 }
 
-.panel-portlet .changed div.grab-title {
+.panel-portlet .changed div.grabber {
   background-color: #FFFFDD !important;
   border-bottom: 1px solid #3D9CD7 !important;
   color: black !important;
 }
 
-.panel-portlet .changed.hidden-pane div.grab-title {
+.panel-portlet .changed.hidden-pane div.grabber {
   background-color: #B4B488 !important;
   border-bottom: 1px solid #3D9CD7 !important;
 }
 
-.panel-portlet .changed div.grab-title span.star {
+.panel-portlet .changed div.grabber span.star {
   font-weight: bold;
   color: #E09010;
 }
@@ -147,7 +143,7 @@ div.panels-set-title-hide .panel-pane-is-title {
   background-color: #2F78A5;
 }
 
-.panel-portlet.hidden-pane .grab-title:hover {
+.panel-portlet.hidden-pane .grabber:hover {
   background-color: #666;
 }
 
@@ -163,7 +159,7 @@ div.panels-set-title-hide .panel-pane-is-title {
   border-color: #858585;
 }
 
-.panel-portlet .grab-title .text {
+.panel-portlet .grabber .text {
   margin-left: 3px;
   font-size: 90%;
   line-height: 20px;
@@ -516,6 +512,7 @@ html.js div.panels-display-links div.ctools-dropdown-container ul li {
 }
 html.js #panels-dnd-main div.ctools-dropdown div.ctools-dropdown-container ul li span.text,
 html.js div.panels-display-links div.ctools-dropdown-container ul li span.text {
+
   font-style: normal;
   color: #000;
   font-weight: bold;
@@ -550,7 +547,6 @@ html.js #panels-dnd-main div.ctools-dropdown div.ctools-dropdown-container ul li
 html.js div.panels-display-links div.ctools-dropdown-container ul li .panels-sub-menu ul li a,
 html.js #panels-dnd-main div.ctools-dropdown div.ctools-dropdown-container ul li .panels-sub-menu span.panels-text,
 html.js div.panels-display-links div.ctools-dropdown-container ul li .panels-sub-menu span.panels-text {
-  width:auto;
   padding: 0 20px;
 }
 
@@ -631,40 +627,3 @@ div.ctools-modal-content {
   background-color: #000!important;
 }
 /* @end */
-
-
-/** Override that obnoxious float on throbber. **/
-#panels-dnd-main .progress-disabled {
-  float: none;
-}
-
-#panels-dnd-main .progress-disabled + .ajax-progress {
-  float: right;
-  position: relative;
-  top: -2em;
-}
-
-/** Override that obnoxious float on throbber. **/
-.panels-categories-box .progress-disabled {
-  float: none;
-}
-
-.panels-categories-box .progress-disabled + .ajax-progress {
-  float: right;
-  position: relative;
-  top: -2em;
-  margin-bottom: -2em;
-}
-
-.panels-section-columns .progress-disabled {
-  display: block;
-  float: left;
-}
-
-.panels-section-columns .ajax-progress .throbber {
-  float: right;
-  position: relative;
-  top: -2em;
-  margin-bottom: -2em;
-}
-
